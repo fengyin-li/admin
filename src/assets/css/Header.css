@@ -1,0 +1,31 @@
+.headerContainer{
+    height: 50px;
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    padding: 0 16px;
+    background: #1976d2;
+    color: #fff;
+}
+.headerLeft{
+    display: flex;
+}
+.headerLeft > img{
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+.headerRight{
+    display: flex;
+    align-items: center;
+}
+.headerRight > svg{
+    margin-left: 10px;
+    cursor: pointer;
+}
+.headerRight > p{
+    margin-left: 5px;
+}
+.close{
+    color: #d23d3d;
+}

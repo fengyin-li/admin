@@ -1,0 +1,46 @@
+.menuContainer{
+    width: 200px;
+    border: 1px solid blue;
+}
+.minmenuContainerShow{
+    width: 30px;
+    border: 1px solid blue;
+}
+.menuContainerHide{
+    border: 1px solid blue;
+    animation:closeMenu 250ms;
+    animation-timing-function: linear;
+}
+.menuContainerShow{
+    border: 1px solid blue;
+    animation:openMenu 250ms;
+    animation-timing-function: linear;
+}
+@keyframes openMenu {
+    0% {
+        width: 30px;
+    }
+    20% {
+        width: 60px;
+    }
+    50% {
+        width: 100px;
+    }
+    100% {
+        width: 200px;
+    }
+}
+@keyframes closeMenu {
+    0% {
+        width: 200px;
+    }
+    20% {
+        width: 170px;
+    }
+    50% {
+        width: 130px;
+    }
+    100% {
+        width: 30px;
+    }
+}
