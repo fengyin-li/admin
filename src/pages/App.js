@@ -6,16 +6,16 @@ import Menu from "../components/Menu";
 import '../assets/css/common.css'
 function App() {
   const [routeList,setRouteList] = useState([]);
-  // const [conwidth,setConwidth] = useState(0);
   const [conheight,setConheight] = useState(0);
   useEffect(() => {
-    // setConwidth(document.documentElement.clientWidth)
     setConheight(document.documentElement.clientHeight)
     let arr = []
     getRoutes(routes)
     function getRoutes(list) {
       for (const v of list) {
-        arr.push(v)
+        if (v.component) {
+          arr.push(v)
+        }
         if (v.children) {
           getRoutes(v.children)
         }

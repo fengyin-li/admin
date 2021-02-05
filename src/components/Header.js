@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom'
 import routes from '../route/route'
 import '../assets/css/Header.css'
 import logourl from '../assets/image/logo.jpg'
-import {Home,AccountCircle,HighlightOff} from '@material-ui/icons'
 
 function Header(props) {
     const [tabHide,setTabHide] = useState(false);
@@ -37,10 +36,11 @@ function Header(props) {
                 } */}
             </div>
             <div className="headerRight">
-                <Home titleAccess ='首页' onClick={()=>goHref('/')}/>
-                <AccountCircle titleAccess="个人中心" onClick={()=>goHref('/mine')} />
-                <p>猜猜我是谁</p>
-                <HighlightOff className="close" titleAccess="登出" onClick={()=>goHref('/login')} />
+                {/* <Home titleAccess ='首页' /> */}
+                <i className="iconfont iconshouye" title="首页" onClick={()=>goHref('/')}/>
+                <i className="iconfont icontouxiang" title="个人中心" onClick={()=>goHref('/mine')}/>
+                <span>猜猜我是谁</span>
+                <i className="iconfont icondengchu" style={{color:'red',fontSize:'20px'}} title="登出" onClick={()=>goHref('/login')} />
             </div>
         </div>
       </>

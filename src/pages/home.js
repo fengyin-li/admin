@@ -1,11 +1,12 @@
-
-function home() {
+import React from 'react';
+import {Button} from 'antd';
+  function home() {
     return (
       <>
-        首页
+        <Button type="primary">首页</Button>
       </>
     );
   }
   
-  export default home;
+ export default home;
   

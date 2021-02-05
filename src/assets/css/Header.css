@@ -19,11 +19,13 @@
     display: flex;
     align-items: center;
 }
-.headerRight > svg{
+.headerRight > i{
     margin-left: 10px;
     cursor: pointer;
+    color: #fff;
+    font-size: 22px;
 }
-.headerRight > p{
+.headerRight > span{
     margin-left: 5px;
 }
 .close{
