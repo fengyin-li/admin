@@ -15,14 +15,18 @@ function MenuList(props) {
   }, []);
   useEffect(() => {
     // console.log(props.location)
-    setSelectedKeys([])
-    setOpenKeys([])
     let arr = []
     getRoutes(routes)
     if (arr.filter(v=>v.path === props.location.pathname).length === 1) {
       arr.filter(v=>v.path === props.location.pathname)[0].tabHide ? setTabHide(true) : setTabHide(false)
     }else{
       setTabHide(true)
+    }
+    arr = []
+    getRoutes(routes.filter(v=>v.menuTab))
+    if (arr.filter(v=>v.path === props.location.pathname).length === 0) {
+      setSelectedKeys([])
+      setOpenKeys([])
     }
     function getRoutes(list) {
       for (const v of list) {
@@ -33,30 +37,28 @@ function MenuList(props) {
       }
     }
   }, [props.location]);
-  function handleClick(e){
-    console.log('click ', e);
-    props.history.push(e.key)
-    setSelectedKeys(e.keyPath)
+  function handleClick({key}){
+    setSelectedKeys([key])
+    props.history.push(key)
   }
-  function handleSelect(e){
-    console.log('Select ', e);
-    setOpenKeys(e.keyPath)
+  function handleChange(e) {
+    setOpenKeys(e)
   }
   function changeMenu() {
-    console.log('初始状态',tabState)
+    // console.log('初始状态',tabState)
     if (tabState === 0) {
-      console.log('开始缩小',tabState)
+      // console.log('开始缩小',tabState)
       setTabState(-1)
       setTimeout(()=>{
         setTabState(-2)
-        console.log('缩小结束',tabState)
+        // console.log('缩小结束',tabState)
       },230)
     }else if(tabState === -2){
-      console.log('开始放大',tabState)
+      // console.log('开始放大',tabState)
       setTabState(1)
       setTimeout(()=>{
         setTabState(0)
-        console.log('放大结束',tabState)
+        // console.log('放大结束',tabState)
       },230)
     }
   }
@@ -69,11 +71,11 @@ function MenuList(props) {
         <div className='menuList' style={{display:tabState===0 ? 'block' : 'none',}}>
           <Menu
             onClick={handleClick}
-            onSelect={handleSelect}
+            onOpenChange={handleChange}
             style={{ width: 175 }}
             mode="inline"
-            defaultSelectedKeys={selectedKeys}
-            defaultOpenKeys={openKeys}
+            selectedKeys={selectedKeys}
+            openKeys={openKeys}
           >
             { 
               // tabList.map(item=>(<div className='menuListItem' key={item.path}>{item.title}</div>))

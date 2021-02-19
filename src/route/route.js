@@ -1,9 +1,10 @@
 import home from '../pages/home'
 import login from '../pages/login'
 import mine from '../pages/mine'
-import listDetails from '../pages/list/listDetails'
+import list from '../pages/list/list'
 import jurisdictionRole from '../pages/jurisdiction/jurisdictionRole'
 import jurisdictionUser from '../pages/jurisdiction/jurisdictionUser'
+import visualization from '../pages/visualization'
 
 //路由参数:{ path:路由地址；title：标题名称；headerBar：是否以头部导航形式存在；
 //tabHide：是否隐藏页面头部和左侧导航；children：左侧二级导航;menuTab:是否以左侧导航形势出现}
@@ -25,7 +26,6 @@ const routes = [
         path:'/mine',
         title:'我的',
         component:mine,
-        menuTab:true,
         headerBar:true,
     },
     {
@@ -33,9 +33,9 @@ const routes = [
         menuTab:true,
         children:[
             {
-                path:'/listDetails',
-                title:'列表详情',
-                component:listDetails
+                path:'/list',
+                title:'商品列表',
+                component:list,
             },
         ]
     },
@@ -55,6 +55,12 @@ const routes = [
             },
         ]
     },
-
+    {
+        title:'可视化展示',
+        menuTab:true,
+        path:'/visualization',
+        component:visualization
+    },
+    
 ]
 export default routes;
