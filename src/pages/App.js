@@ -4,6 +4,7 @@ import routes from '../route/route'
 import Header from "../components/Header";
 import Menu from "../components/Menu";
 import '../assets/css/common.css'
+
 function App() {
   const [routeList,setRouteList] = useState([]);
   const [conheight,setConheight] = useState(0);
@@ -30,7 +31,7 @@ function App() {
           <Header />
           <div style={{width:'100%',display:'flex'}}>
             <Menu style={{height:conheight-50}}/>
-            <div style={{height:conheight-50,width:'100%'}}>
+            <div style={{height:conheight-50,width:'100%',padding:'16px'}}>
               {
                 routeList.map((item,index)=>( 
                   <Route key={index} exact path={item.path} component={item.component}></Route>

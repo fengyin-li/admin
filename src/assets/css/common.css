@@ -7,3 +7,51 @@ body{
 .curp{
     cursor: pointer;
 }
+p{
+    margin: 0;
+}
+/* 模拟卡片悬浮 */
+.card{
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .15);
+    border-right:1px solid rgba(0, 0, 0, .15);
+    border-radius: 5px;
+}
+.card:hover{
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, .25);
+    transition: all .2s ease-in-out;
+}
+/* 模拟form表单 */
+.modalContainer{
+    width: 470px;
+    height: auto;
+    display: flex;
+    flex-direction:column;
+    align-items:center;
+}
+.modalItem{
+    width: 300px;
+    height: 50px;
+    display: flex;
+    align-items:center;
+    position: relative;
+}
+.modalLabel{
+    width: 100px;
+    text-align: right;
+    padding-right: 10px;
+    font-size: 16px;
+}
+.modalVal{
+    width: 200px;
+}
+.modalRequired{
+    position: absolute;
+    right: -10px;
+    color: red;
+    font-size: 17px;
+}
+/* input为number时去掉右边的箭头 */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button { -webkit-appearance: none; }
+input[type="number"]{ -moz-appearance: textfield; }
+
