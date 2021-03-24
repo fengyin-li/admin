@@ -1,25 +1,38 @@
 import React, { useEffect, useState } from 'react'
-import { Input,Button,Table,Pagination,Modal,Select  } from 'antd';
+import { Input,Button,Table,Pagination,Modal,Select,message  } from 'antd';
+import {listApi} from '../../api/list'
+import {conversionTime} from '../../utils/time'
 import '../../assets/css/list.css'
   function List() {
     const [searchName, setSearchName] = useState('');
     const [tableData, setTableData] = useState([]);
     const [selectedKeys, setSelectedKeys] = useState([]);
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(2);
     const [total, setTotal] = useState(0);
     const [addVisible, setAddVisible] = useState(false);
     const [addVisibleStatus, setAddVisibleStatus] = useState(true);
     const [modalGoodName, setModalGoodName] = useState('');
+    const [modalGoodProid, setModalGoodProid] = useState('');
     const [modalGoodStock, setModalGoodStock] = useState(0);
     const [modalGoodStatus, setModalGoodStatus] = useState(0);
+    const [modalGoodid, setModalGoodid] = useState('');
     const [ModalLoading, setModalLoading] = useState(false);
     useEffect(() => {
       // console.log('商品列表页面')
-      setTotal(31)
-      setTableData([{proid:'001',name:'999感冒灵',stock:10,createTime:'2021-02-19 15:53:00',status:0},{proid:'002',name:'霍胆丸',stock:20,createTime:'2021-02-19 15:53:00',status:1}])
-    }, []);
-    
+      let data = {page,pageSize}
+      listApi.getGoodList(data)
+      .then(res=>{
+        console.log(res)
+        let {code,msg,data} = res;
+        if (code === 1) {
+          setTableData(data.list)
+          setTotal(data.total)
+        } else {
+          message.error(msg);
+        }
+      })
+    }, [page,pageSize]);
     const columns = [ {
       title: '商品编号',
       dataIndex: 'proid',
@@ -32,6 +45,9 @@ import '../../assets/css/list.css'
     }, {
       title: '建立时间',
       dataIndex: 'createTime',
+      render: (text,record) => (
+        <span>{conversionTime(text)}</span>
+      ),
     }, {
       title: '商品状态',
       dataIndex: 'status',
@@ -42,7 +58,10 @@ import '../../assets/css/list.css'
       title: '操作',
       dataIndex: 'action',
       render: (text, record) => (
-        <span className='curp' style={{color:'#1890ff'}} onClick={()=>openEditModal(record)}>编辑</span>
+        <div>
+          <span className='curp' style={{color:'#1890ff'}} onClick={()=>openEditModal(record)}>编辑</span>
+          <span className='curp' style={{color:'red'}} onClick={()=>openDelModal(record)}>删除</span>
+        </div>
       ),
     }];
     const Option = Select.Option;
@@ -56,19 +75,99 @@ import '../../assets/css/list.css'
       setPage(page)
       setPageSize(size)
     }
+    function getGoodList() {
+      let data = {page,pageSize}
+      listApi.getGoodList(data)
+      .then(res=>{
+        console.log(res)
+        let {code,msg,data} = res;
+        if (code === 1) {
+          setTableData(data.list)
+          setTotal(data.total)
+        } else {
+          message.error(msg);
+        }
+      })
+    }
     function addModalOk() {
       setModalLoading(true)
-      setTimeout(()=>{
-        setAddVisible(false)
-        setModalLoading(false)
-      },2000)
+      if (checkData()) {
+        let data = {
+          name:modalGoodName,
+          stock:modalGoodStock,
+          proid:modalGoodProid
+        }
+        if (addVisibleStatus) {
+          listApi.addNewGood(data)
+          .then(res=>{
+            console.log(res)
+            let {code,msg} = res;
+            if (code === 1) {
+              setPage(1)
+              message.success(msg);
+              setAddVisible(false)
+              getGoodList()
+            } else {
+              message.error(msg);
+            }
+          })
+          .finally(res=>{
+            setModalLoading(false)
+          })
+        } else {
+          data.status = modalGoodStatus;
+          data.id = modalGoodid;
+          listApi.editGood(data)
+          .then(res=>{
+            console.log(res)
+            let {code,msg} = res;
+            if (code === 1) {
+              setPage(1)
+              message.success(msg);
+              setAddVisible(false)
+              getGoodList()
+            } else {
+              message.error(msg);
+            }
+          })
+          .finally(res=>{
+            setModalLoading(false)
+          })
+        }
+      }
+    }
+    //校验参数
+    function checkData() {
+      if (modalGoodName === '') {
+        message.error('请输入商品名称');
+        return false
+      } else if(modalGoodProid === '') {
+        message.error('请输入商品编号');
+        return false
+      } else if(modalGoodStock === '') {
+        message.error('请输入商品库存');
+        return false
+      } else if(!addVisibleStatus) {
+        if (modalGoodStatus === '') {
+          message.error('请选择商品状态');
+          return false
+        }
+      }
+      return true
+    }
+    //打开删除弹窗
+    function openDelModal(data) {
+      setModalGoodid(data.id)
+      
     }
     //打开编辑弹窗
     function openEditModal(data) {
       // console.log(data)
       setAddVisibleStatus(false)
+      setModalGoodid(data.id)
       setModalGoodName(data.name)
       setModalGoodStock(data.stock)
+      setModalGoodProid(data.proid)
       setModalGoodStatus(data.status)
       setAddVisible(true)
     }
@@ -76,6 +175,7 @@ import '../../assets/css/list.css'
     function openVisible() {
       setAddVisibleStatus(true)
       setModalGoodName('')
+      setModalGoodProid('')
       setModalGoodStock(1)
       setModalGoodStatus(0)
       setAddVisible(true)
@@ -107,8 +207,8 @@ import '../../assets/css/list.css'
         columns={columns} dataSource={tableData} />
         <div className="listPage">
           <Pagination current={page} pageSize={pageSize} 
-          showTotal={total => `总商品：${total}`}
-          pageSizeOptions={[10,15,20]} 
+          showTotal={total => `商品总数：${total}`}
+          pageSizeOptions={[1,2,3]} 
           showSizeChanger={true}
           onChange={(page,size) =>changePage(page,size)}
           total={total}/>
@@ -133,6 +233,15 @@ import '../../assets/css/list.css'
               <p className="modalRequired">*</p>
             </div>
             <div className="modalItem">
+              <p className="modalLabel">商品编号：</p>
+              <div className="modalVal">
+                <Input placeholder="请输入商品编号"
+                  value={modalGoodProid}
+                  onChange={e=>setModalGoodProid(e.target.value)}/>
+              </div>
+              <p className="modalRequired">*</p>
+            </div>
+            <div className="modalItem">
               <p className="modalLabel">商品库存：</p>
               <div className="modalVal">
                 <Input placeholder="请输入商品库存"
@@ -142,7 +251,7 @@ import '../../assets/css/list.css'
               </div>
               <p className="modalRequired">*</p>
             </div>
-            <div className="modalItem">
+            <div className="modalItem" style={{display:addVisibleStatus ? 'none' : 'flex'}}>
               <p className="modalLabel">商品状态：</p>
               <div className="modalVal">
                 <Select value={String(modalGoodStatus)} style={{ width: 200 }} onChange={changeModalGoodStatus}>
