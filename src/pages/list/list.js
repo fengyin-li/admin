@@ -11,6 +11,7 @@ import '../../assets/css/list.css'
     const [pageSize, setPageSize] = useState(2);
     const [total, setTotal] = useState(0);
     const [addVisible, setAddVisible] = useState(false);
+    const [delVisible, setDelVisible] = useState(false);
     const [addVisibleStatus, setAddVisibleStatus] = useState(true);
     const [modalGoodName, setModalGoodName] = useState('');
     const [modalGoodProid, setModalGoodProid] = useState('');
@@ -18,20 +19,10 @@ import '../../assets/css/list.css'
     const [modalGoodStatus, setModalGoodStatus] = useState(0);
     const [modalGoodid, setModalGoodid] = useState('');
     const [ModalLoading, setModalLoading] = useState(false);
+    const [delModalLoading, setDelModalLoading] = useState(false);
     useEffect(() => {
       // console.log('商品列表页面')
-      let data = {page,pageSize}
-      listApi.getGoodList(data)
-      .then(res=>{
-        console.log(res)
-        let {code,msg,data} = res;
-        if (code === 1) {
-          setTableData(data.list)
-          setTotal(data.total)
-        } else {
-          message.error(msg);
-        }
-      })
+      getGoodList()
     }, [page,pageSize]);
     const columns = [ {
       title: '商品编号',
@@ -60,14 +51,14 @@ import '../../assets/css/list.css'
       render: (text, record) => (
         <div>
           <span className='curp' style={{color:'#1890ff'}} onClick={()=>openEditModal(record)}>编辑</span>
-          <span className='curp' style={{color:'red'}} onClick={()=>openDelModal(record)}>删除</span>
+          <span className='curp' style={{color:'red',marginLeft:'10px'}} onClick={()=>openDelModal(record)}>删除</span>
         </div>
       ),
     }];
     const Option = Select.Option;
     const rowSelection = {
       onChange(selectedRowKeys, selectedRows) {
-        console.log("选中的key值:",selectedRowKeys, "选中的数据: ", selectedRows);
+        // console.log("选中的key值:",selectedRowKeys, "选中的数据: ", selectedRows);
         setSelectedKeys(selectedRowKeys)
       },
     };
@@ -76,10 +67,9 @@ import '../../assets/css/list.css'
       setPageSize(size)
     }
     function getGoodList() {
-      let data = {page,pageSize}
+      let data = {page,pageSize,searchName}
       listApi.getGoodList(data)
       .then(res=>{
-        console.log(res)
         let {code,msg,data} = res;
         if (code === 1) {
           setTableData(data.list)
@@ -88,6 +78,22 @@ import '../../assets/css/list.css'
           message.error(msg);
         }
       })
+    }
+    //刷新
+    function refresh() {
+      setSearchName('')
+      if (page === 1) {
+        getGoodList()
+      } else {
+        setPage(1)
+      }
+    }
+    function goSearch() {
+      if (page === 1) {
+        getGoodList()
+      } else {
+        setPage(1)
+      }
     }
     function addModalOk() {
       setModalLoading(true)
@@ -100,32 +106,30 @@ import '../../assets/css/list.css'
         if (addVisibleStatus) {
           listApi.addNewGood(data)
           .then(res=>{
-            console.log(res)
             let {code,msg} = res;
             if (code === 1) {
               setPage(1)
               message.success(msg);
               setAddVisible(false)
-              getGoodList()
+             
             } else {
               message.error(msg);
             }
           })
           .finally(res=>{
             setModalLoading(false)
+            // getGoodList()
           })
         } else {
           data.status = modalGoodStatus;
           data.id = modalGoodid;
           listApi.editGood(data)
           .then(res=>{
-            console.log(res)
             let {code,msg} = res;
             if (code === 1) {
               setPage(1)
               message.success(msg);
               setAddVisible(false)
-              getGoodList()
             } else {
               message.error(msg);
             }
@@ -135,6 +139,27 @@ import '../../assets/css/list.css'
           })
         }
       }
+    }
+    function delModalOk() {
+      setDelModalLoading(true)
+      const data = {
+        id:modalGoodid,
+      }
+      listApi.delGood(data)
+      .then(res=>{
+        console.log(res)
+        let {code,msg} = res;
+        if (code === 1) {
+          setPage(1)
+          message.success(msg);
+          setDelVisible(false)
+        } else {
+          message.error(msg);
+        }
+      })
+      .finally(res=>{
+        setDelModalLoading(false)
+      })
     }
     //校验参数
     function checkData() {
@@ -158,7 +183,7 @@ import '../../assets/css/list.css'
     //打开删除弹窗
     function openDelModal(data) {
       setModalGoodid(data.id)
-      
+      setDelVisible(true)
     }
     //打开编辑弹窗
     function openEditModal(data) {
@@ -180,9 +205,6 @@ import '../../assets/css/list.css'
       setModalGoodStatus(0)
       setAddVisible(true)
     }
-    function addModalCancel(){
-      setAddVisible(false)
-    }
     function changeModalGoodStatus(val) {
       setModalGoodStatus(val)
     }
@@ -198,8 +220,9 @@ import '../../assets/css/list.css'
             </div>
           </div>
           <div style={{display:'flex'}}>
-            <Button type="primary" onClick={()=>openVisible()} style={{marginRight:'10px'}}>添加</Button>
-            <Button type="primary">搜索</Button>
+            <Button type="primary" onClick={goSearch} style={{marginRight:'10px'}}>搜索</Button>
+            <Button type="primary" onClick={refresh} style={{marginRight:'10px'}}>刷新</Button>
+            <Button type="primary" onClick={()=>openVisible()} >添加</Button>
           </div>
         </div>
         <Table  pagination={false} rowKey={record => record.proid} 
@@ -219,7 +242,7 @@ import '../../assets/css/list.css'
           okText="确认"
           visible={addVisible}
           onOk={addModalOk}
-          onCancel={addModalCancel}
+          onCancel={()=>setAddVisible(false)}
           confirmLoading={ModalLoading}
         >
           <div className="modalContainer">
@@ -262,6 +285,17 @@ import '../../assets/css/list.css'
               <p className="modalRequired">*</p>
             </div>
           </div>
+        </Modal>
+        <Modal
+          title="警告" 
+          cancelText="取消"
+          okText="确认"
+          visible={delVisible}
+          onOk={delModalOk}
+          onCancel={()=>setDelVisible(false)}
+          confirmLoading={delModalLoading}
+        >
+          <p style={{fontSize:'17px'}}>确定删除该商品吗？</p>
         </Modal>
       </div>
     );
