@@ -209,7 +209,7 @@ import '../../assets/css/list.css'
       setModalGoodStatus(val)
     }
     return (
-      <div className="listContainer">
+      <div className="listContainer containerp">
         <h1>商品列表</h1>
         <div className='search'>
           <div className="searchLeft">

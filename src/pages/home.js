@@ -32,7 +32,7 @@ import '../assets/css/home.css'
       }
     }
     return (
-      <>
+      <div className="containerp">
         <div className="header">
           <div className="card headerTag">
             <div className="headerTag-left" style={{background:'#000'}}>
@@ -79,7 +79,7 @@ import '../assets/css/home.css'
             <Calendar fullscreen={false} locale={locale}/>
           </div>
         </div>
-      </>
+      </div>
     );
     
   }

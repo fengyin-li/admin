@@ -9,7 +9,7 @@ function App() {
   const [routeList,setRouteList] = useState([]);
   const [conheight,setConheight] = useState(0);
   useEffect(() => {
-    setConheight(document.documentElement.clientHeight)
+    window.addEventListener('resize',onResize);
     let arr = []
     getRoutes(routes)
     function getRoutes(list) {
@@ -23,7 +23,10 @@ function App() {
       }
     }
     setRouteList(arr)
-  }, []); 
+  }, []);
+  function onResize() {
+    setConheight(document.documentElement.clientHeight)
+  };
   return (
     <>
       <Router>
@@ -31,7 +34,7 @@ function App() {
           <Header />
           <div style={{width:'100%',display:'flex'}}>
             <Menu style={{height:conheight-50}}/>
-            <div style={{height:conheight-50,width:'100%',padding:'16px'}}>
+            <div style={{height:conheight-50,width:'100%'}}>
               {
                 routeList.map((item,index)=>( 
                   <Route key={index} exact path={item.path} component={item.component}></Route>
