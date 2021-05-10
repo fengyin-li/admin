@@ -9,6 +9,7 @@ function App() {
   const [routeList,setRouteList] = useState([]);
   const [conheight,setConheight] = useState(0);
   useEffect(() => {
+    setConheight(document.documentElement.clientHeight)
     window.addEventListener('resize',onResize);
     let arr = []
     getRoutes(routes)
@@ -23,10 +24,10 @@ function App() {
       }
     }
     setRouteList(arr)
+    function onResize() {
+      setConheight(document.documentElement.clientHeight)
+    };
   }, []);
-  function onResize() {
-    setConheight(document.documentElement.clientHeight)
-  };
   return (
     <>
       <Router>
